@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Range Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <section class="panel">
+      <h1>Калькулятор максимальной дальности</h1>
+      <p>Вычисляет <strong>R<sub>max</sub></strong> по формуле 19 из документа.</p>
+      <div class="formula">
+        <p><strong>Формула 19:</strong></p>
+        <p>R<sub>max</sub> = π D<sub>t</sub> D<sub>r</sub> / (4 λ) × √(P<sub>t</sub> η<sub>t</sub> η<sub>r</sub> L t<sub>int</sub> / (ρ<sub>acq</sub> k<sub>B</sub> T<sub>sys</sub>))</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Параметры</h2>
+      <div class="grid">
+        <label>
+          Диаметр передатчика D<sub>t</sub>, м
+          <input id="dt" type="number" value="10" min="0" step="0.01">
+        </label>
+        <label>
+          Диаметр приёмника D<sub>r</sub>, м
+          <input id="dr" type="number" value="10" min="0" step="0.01">
+        </label>
+        <label>
+          Мощность передатчика P<sub>t</sub>, Вт
+          <input id="pt" type="number" value="100000" min="0" step="1">
+        </label>
+        <label>
+          Частота f, МГц
+          <input id="freq" type="number" value="1420.405751" min="0" step="0.001">
+        </label>
+        <label>
+          Эффективность передатчика η<sub>t</sub>
+          <input id="etaT" type="number" value="0.6" min="0" max="1" step="0.01">
+        </label>
+        <label>
+          Эффективность приёмника η<sub>r</sub>
+          <input id="etaR" type="number" value="0.6" min="0" max="1" step="0.01">
+        </label>
+        <label>
+          Потери L
+          <input id="L" type="number" value="1" min="0" step="0.01">
+        </label>
+        <label>
+          Время интеграции t<sub>int</sub>, с
+          <input id="tint" type="number" value="1" min="0" step="0.1">
+        </label>
+        <label>
+          ρ<sub>acq</sub>
+          <input id="rho" type="number" value="30" min="0" step="0.1">
+        </label>
+        <label>
+          T<sub>sys</sub>, К
+          <input id="Tsys" type="number" value="30" min="0" step="0.1">
+        </label>
+      </div>
+
+      <button id="calculateButton">Вычислить R<sub>max</sub></button>
+
+      <div class="result" id="resultBox">
+        <strong>Результат:</strong>
+        <p id="resultText">Введите параметры и нажмите «Вычислить».</p>
+      </div>
+    </section>
+
+    <section class="panel notes">
+      <h2>Примечания</h2>
+      <ul>
+        <li>Диаметр антенн указывается в метрах.</li>
+        <li>Мощность передатчика вводится в ваттах.</li>
+        <li>Результат выводится в парсеках и световых годах.</li>
+        <li>Для частоты 1420.405751 МГц длина волны примерно 0.211061 м.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="calculator.js"></script>
+</body>
+</html>
