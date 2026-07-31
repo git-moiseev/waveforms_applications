@@ -90,11 +90,9 @@ The dominant limitation is expected to be reduced detection sensitivity due to s
 ## Repository Structure
 
 ```
-1. Introduction
-2. Interstellar Communication Requirements
-3. Microwave Transmission Window
-4. Doppler Environment
-5. Propagation Through the Interstellar Medium
+1. Communication Range Calclulauions
+2. Communication Range Result Table
+3. Propagation Through the Interstellar Medium
 6. Robustness of Hierarchical Waveforms
 7. Beacon Protocol Design
 8. Detection Strategy
