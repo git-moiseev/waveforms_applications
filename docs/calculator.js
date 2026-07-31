@@ -31,7 +31,7 @@ function calculateRmax() {
   const RmaxParsec = RmaxMeters / parsecInMeters;
   const RmaxLy = RmaxParsec * 3.26156;
 
-  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec)}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy)}</strong> Light years<br>t<sub>int</sub> = <strong>${formatNumber(tint)}</strong>`;
+  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec)}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy)}</strong> Light years<br>t<sub>int</sub> = <strong>${Math.round(tint)}</strong>`;
 }
 
 const tintInput = document.getElementById('tint');
