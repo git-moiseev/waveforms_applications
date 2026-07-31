@@ -8,7 +8,7 @@ function formatNumber(value) {
 function calculateRmax() {
   const Dt = parseFloat(document.getElementById('dt').value);
   const Dr = parseFloat(document.getElementById('dr').value);
-  const Pt = parseFloat(document.getElementById('pt').value);
+  const Pt = parseFloat(document.getElementById('pt').value) * 1000; // Convert kW to W
   const freqMHz = parseFloat(document.getElementById('freq').value);
   const etaT = parseFloat(document.getElementById('etaT').value);
   const etaR = parseFloat(document.getElementById('etaR').value);
@@ -18,7 +18,7 @@ function calculateRmax() {
   const Tsys = parseFloat(document.getElementById('Tsys').value);
 
   if ([Dt, Dr, Pt, freqMHz, etaT, etaR, L, tint, rho, Tsys].some(v => !isFinite(v) || v <= 0)) {
-    document.getElementById('resultText').textContent = 'Пожалуйста, введите положительные числовые значения для всех параметров.';
+    document.getElementById('resultText').textContent = 'Please enter valid positive numbers for all parameters.';
     return;
   }
 
@@ -31,8 +31,102 @@ function calculateRmax() {
   const RmaxParsec = RmaxMeters / parsecInMeters;
   const RmaxLy = RmaxParsec * 3.26156;
 
-  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec)}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy)}</strong> свет.лет<br>λ = <strong>${formatNumber(lambda)}</strong> м`;
+  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec)}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy)}</strong> Light years<br>λ = <strong>${formatNumber(lambda)}</strong> m`;
 }
+
+const tintInput = document.getElementById('tint');
+const tintRange = document.getElementById('tint-range');
+
+const minSeconds = 1;
+const maxSeconds = 365 * 24 * 60 * 60; // one year
+
+function sliderToSeconds(position) {
+  const fraction =
+    (position - Number(tintRange.min)) /
+    (Number(tintRange.max) - Number(tintRange.min));
+
+  return Math.round(
+    minSeconds * Math.pow(maxSeconds / minSeconds, fraction)
+  );
+}
+
+function secondsToSlider(seconds) {
+  const fraction =
+    Math.log(seconds / minSeconds) /
+    Math.log(maxSeconds / minSeconds);
+
+  return Math.round(
+    Number(tintRange.min) +
+    fraction *
+      (Number(tintRange.max) - Number(tintRange.min))
+  );
+}
+
+function formatDuration(totalSeconds) {
+  totalSeconds = Math.round(totalSeconds);
+
+  const days = Math.floor(totalSeconds / 86400);
+  totalSeconds %= 86400;
+
+  const hours = Math.floor(totalSeconds / 3600);
+  totalSeconds %= 3600;
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return [
+    days && `${days}d`,
+    hours && `${hours}h`,
+    minutes && `${minutes}m`,
+    (seconds || (!days && !hours && !minutes)) && `${seconds}s`
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function parseDuration(text) {
+  const units = {
+    y: 365 * 86400,
+    d: 86400,
+    h: 3600,
+    m: 60,
+    s: 1
+  };
+
+  let total = 0;
+  let found = false;
+  const pattern = /(\d+(?:\.\d+)?)\s*([ydhms])/gi;
+
+  for (const match of text.matchAll(pattern)) {
+    total += Number(match[1]) * units[match[2].toLowerCase()];
+    found = true;
+  }
+
+  return found ? Math.round(total) : Number(text);
+}
+
+tintRange.addEventListener('input', () => {
+  const seconds = sliderToSeconds(Number(tintRange.value));
+
+  tintInput.value = formatDuration(seconds);
+  calculate(); // if immediate recalculation is required
+});
+
+tintInput.addEventListener('change', () => {
+  let seconds = parseDuration(tintInput.value);
+
+  if (!Number.isFinite(seconds)) {
+    seconds = minSeconds;
+  }
+
+  seconds = Math.min(maxSeconds, Math.max(minSeconds, seconds));
+
+  tintInput.value = formatDuration(seconds);
+  tintRange.value = secondsToSlider(seconds);
+
+  calculate();
+});
+
 
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('calculateButton').addEventListener('click', calculateRmax);

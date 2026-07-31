@@ -109,6 +109,38 @@ input[type="number"]:focus {
   box-shadow: 0 0 0 4px rgba(96,165,250,0.12);
 }
 
+/* Chrome, Edge, Safari, Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type="text"] {
+  margin-top: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(96, 165, 250, 0.24);
+  background: rgba(15, 23, 42, 0.86);
+  color: #f8fafc;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96,165,250,0.12);
+}
+
+
 button {
   margin-top: 28px;
   padding: 16px 24px;
@@ -145,6 +177,10 @@ button:hover {
 .notes ul {
   padding-left: 18px;
   margin: 0;
+}
+
+.nowrap {
+  white-space: nowrap;
 }
 
 .notes li {
