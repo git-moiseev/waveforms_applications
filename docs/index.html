@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,47 +9,47 @@
 <body>
   <main class="container">
     <section class="panel">
-      <h1>Калькулятор максимальной дальности</h1>
-      <p>Вычисляет <strong>R<sub>max</sub></strong> по формуле 19 из документа.</p>
+      <h1>Maximum Range Calculator</h1>
+      <p>Computes <strong>R<sub>max</sub></strong> using Formula 19 from the document.</p>
       <div class="formula">
-        <p><strong>Формула 19:</strong></p>
+        <p><strong>Formula 19:</strong></p>
         <p>R<sub>max</sub> = π D<sub>t</sub> D<sub>r</sub> / (4 λ) × √(P<sub>t</sub> η<sub>t</sub> η<sub>r</sub> L t<sub>int</sub> / (ρ<sub>acq</sub> k<sub>B</sub> T<sub>sys</sub>))</p>
       </div>
     </section>
 
     <section class="panel">
-      <h2>Параметры</h2>
+      <h2>Parameters</h2>
       <div class="grid">
         <label>
-          Диаметр передатчика D<sub>t</sub>, м
+          Transmitter diameter D<sub>t</sub>, m
           <input id="dt" type="number" value="10" min="0" step="0.01">
         </label>
         <label>
-          Диаметр приёмника D<sub>r</sub>, м
+          Receiver diameter D<sub>r</sub>, m
           <input id="dr" type="number" value="10" min="0" step="0.01">
         </label>
         <label>
-          Мощность передатчика P<sub>t</sub>, Вт
+          Transmit power P<sub>t</sub>, W
           <input id="pt" type="number" value="100000" min="0" step="1">
         </label>
         <label>
-          Частота f, МГц
+          Frequency f, MHz
           <input id="freq" type="number" value="1420.405751" min="0" step="0.001">
         </label>
         <label>
-          Эффективность передатчика η<sub>t</sub>
+          Transmitter efficiency η<sub>t</sub>
           <input id="etaT" type="number" value="0.6" min="0" max="1" step="0.01">
         </label>
         <label>
-          Эффективность приёмника η<sub>r</sub>
+          Receiver efficiency η<sub>r</sub>
           <input id="etaR" type="number" value="0.6" min="0" max="1" step="0.01">
         </label>
         <label>
-          Потери L
+          Link loss factor L
           <input id="L" type="number" value="1" min="0" step="0.01">
         </label>
         <label>
-          Время интеграции t<sub>int</sub>, с
+          Coherent integration t<sub>int</sub>, s
           <input id="tint" type="number" value="1" min="0" step="0.1">
         </label>
         <label>
@@ -57,26 +57,26 @@
           <input id="rho" type="number" value="30" min="0" step="0.1">
         </label>
         <label>
-          T<sub>sys</sub>, К
+          T<sub>sys</sub>, K
           <input id="Tsys" type="number" value="30" min="0" step="0.1">
         </label>
       </div>
 
-      <button id="calculateButton">Вычислить R<sub>max</sub></button>
+      <button id="calculateButton">Calculate R<sub>max</sub></button>
 
       <div class="result" id="resultBox">
-        <strong>Результат:</strong>
-        <p id="resultText">Введите параметры и нажмите «Вычислить».</p>
+        <strong>Result:</strong>
+        <p id="resultText">Enter values and press Calculate.</p>
       </div>
     </section>
 
     <section class="panel notes">
-      <h2>Примечания</h2>
+      <h2>Notes</h2>
       <ul>
-        <li>Диаметр антенн указывается в метрах.</li>
-        <li>Мощность передатчика вводится в ваттах.</li>
-        <li>Результат выводится в парсеках и световых годах.</li>
-        <li>Для частоты 1420.405751 МГц длина волны примерно 0.211061 м.</li>
+        <li>Antenna diameters are in meters.</li>
+        <li>Transmitter power is in watts.</li>
+        <li>The result is shown in parsecs and light years.</li>
+        <li>At 1420.405751 MHz, the wavelength is about 0.211061 m.</li>
       </ul>
     </section>
   </main>
