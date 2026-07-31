@@ -30,21 +30,41 @@ body {
  * Signal rings above the body background and below the calculator.
  * This fixed element does not participate in normal document flow.
  */
+#signal-source {
+  position: fixed;
+
+  /* The same coordinates */
+  left: 90%;
+  top: 15%;
+
+  width: 4px;
+  height: 4px;
+
+  z-index: 0;
+  pointer-events: none;
+
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+
+  background: rgb(235, 248, 255);
+
+  box-shadow:
+    0 0 3px rgba(235, 248, 255, 0.95),
+    0 0 9px rgba(140, 210, 255, 0.75),
+    0 0 20px rgba(120, 200, 255, 0.45);
+
+  animation: transmitter-flicker 2.8s ease-in-out infinite;
+}
+
 #signal-waves {
   position: fixed;
   left: 90%;
   top: 15%;
   width: 560px;
-  /*
-  top: clamp(25px, 7vh, 90px);
-  right: clamp(-80px, 1vw, 40px);
-  width: clamp(280px, 31vw, 520px);
-    */
   aspect-ratio: 1;
 
   z-index: 0;
   pointer-events: none;
-
   border-radius: 50%;
 
   background:
@@ -55,61 +75,22 @@ body {
       transparent 11.4% 21.8%
     );
 
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
   opacity: 0.04;
   filter: blur(0.3px);
+
   transform: translate(-50%, -50%) rotate(-8deg);
 
   transition:
     opacity 0.15s linear,
     filter 0.15s linear;
+
+  animation: signal-expansion 18s ease-in-out infinite alternate;
 }
 
-#signal-waves::before {
-  content: "";
-
-  position: absolute;
-  left: 50%;
-  top: 50%;
-
-  width: 6px;
-  height: 6px;
-
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-
-  background: rgb(220, 240, 255);
-
-  box-shadow:
-      0 0 3px rgba(220,240,255,.9),
-      0 0 8px rgba(120,200,255,.7),
-      0 0 18px rgba(120,200,255,.4);
-
-  transition:
-      transform .15s linear,
-      opacity .15s linear,
-      box-shadow .15s linear;
-
-  transform:
-        translate(-50%, -50%)
-        scale(var(--dot-scale, 1));
-}
-
-#signal-waves::after {
-    content: "";
-
-    position: absolute;
-    left: 50%;
-    top: 50%;
-
-    width: 14px;
-    height: 14px;
-
-    transform: translate(-50%, -50%);
-
-    background:
-        linear-gradient(transparent 48%, rgba(220,240,255,.8) 50%, transparent 52%),
-        linear-gradient(90deg, transparent 48%, rgba(220,240,255,.8) 50%, transparent 52%);
-}
 
 /* Calculator content remains above the rings. */
 .container {
@@ -272,5 +253,38 @@ input[readonly] {
     top: 20px;
     right: -130px;
     width: 360px;
+  }
+}
+
+@keyframes signal-expansion {
+    from {
+        background-size: 100% 100%;
+    }
+
+    to {
+        background-size: 120% 120%;
+    }
+}
+
+@keyframes transmitter-flicker {
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: translate(-50%, -50%) scale(0.9);
+
+    box-shadow:
+      0 0 3px rgba(235, 248, 255, 0.85),
+      0 0 8px rgba(140, 210, 255, 0.65),
+      0 0 18px rgba(120, 200, 255, 0.35);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+
+    box-shadow:
+      0 0 5px rgba(255, 255, 255, 1),
+      0 0 12px rgba(160, 220, 255, 0.9),
+      0 0 28px rgba(120, 200, 255, 0.55);
   }
 }
