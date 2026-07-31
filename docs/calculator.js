@@ -131,3 +131,17 @@ tintInput.addEventListener('change', () => {
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('calculateButton').addEventListener('click', calculateRmax);
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const calculateButton = document.getElementById('calculateButton');
+
+  calculateRmax(); // initial calculation
+
+  calculateButton.addEventListener('click', calculateRmax);
+
+  document
+    .querySelectorAll('input, select')
+    .forEach(element => {
+      element.addEventListener('input', calculateRmax);
+    });
+});
