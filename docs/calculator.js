@@ -1,44 +1,64 @@
 const kB = 1.380649e-23;
 const c = 299792458;
-
-function formatNumber(value) {
-  return value.toLocaleString('ru-RU', { maximumFractionDigits: 6, minimumFractionDigits: 3 });
-}
-
-function calculateRmax() {
-  const Dt = parseFloat(document.getElementById('dt').value);
-  const Dr = parseFloat(document.getElementById('dr').value);
-  const Pt = parseFloat(document.getElementById('pt').value) * 1000; // Convert kW to W
-  const freqMHz = parseFloat(document.getElementById('freq').value);
-  const etaT = parseFloat(document.getElementById('etaT').value);
-  const etaR = parseFloat(document.getElementById('etaR').value);
-  const L = parseFloat(document.getElementById('L').value);
-  const tint = parseDuration(document.getElementById('tint').value);
-  const rho = parseFloat(document.getElementById('rho').value);
-  const Tsys = parseFloat(document.getElementById('Tsys').value);
-
-  if ([Dt, Dr, Pt, freqMHz, etaT, etaR, L, tint, rho, Tsys].some(v => !isFinite(v) || v <= 0)) {
-    document.getElementById('resultText').textContent = 'Please enter valid positive numbers for all parameters.';
-    return;
-  }
-
-  const freqHz = freqMHz * 1e6;
-  const lambda = c / freqHz;
-  const numerator = Math.PI * Dt * Dr;
-  const insideSqrt = Pt * etaT * etaR * L * tint / (rho * kB * Tsys);
-  const RmaxMeters = (numerator / (4 * lambda)) * Math.sqrt(insideSqrt);
-  const parsecInMeters = 3.0856775814913673e16;
-  const RmaxParsec = RmaxMeters / parsecInMeters;
-  const RmaxLy = RmaxParsec * 3.26156;
-
-  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec)}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy)}</strong> Light years<br>t<sub>int</sub> = <strong>${Math.round(tint)}</strong>`;
-}
+const minSeconds = 1;
+const maxSeconds = 365 * 24 * 60 * 60; // one year
 
 const tintInput = document.getElementById('tint');
 const tintRange = document.getElementById('tint-range');
+const dtInput = document.getElementById('dt');
+const dtRange = document.getElementById('dt-range');
+const drInput = document.getElementById('dr');
+const drRange = document.getElementById('dr-range');
+const ptInput = document.getElementById('pt');
+const ptRange = document.getElementById('pt-range');
 
-const minSeconds = 1;
-const maxSeconds = 365 * 24 * 60 * 60; // one year
+dtRange.addEventListener('input', () => {
+  dtInput.value = dtRange.value;
+  calculateRmax();
+});
+
+dtInput.addEventListener('input', () => {
+  const min = Number(dtRange.min);
+  const max = Number(dtRange.max);
+  const value = Number(dtInput.value);
+
+  if (Number.isFinite(value)) {
+    dtRange.value = Math.max(min, Math.min(max, value));
+    calculateRmax();
+  }
+});
+
+drRange.addEventListener('input', () => {
+  drInput.value = drRange.value;
+  calculateRmax();
+});
+
+drInput.addEventListener('input', () => {
+  const min = Number(drRange.min);
+  const max = Number(drRange.max);
+  const value = Number(drInput.value);
+
+  if (Number.isFinite(value)) {
+    drRange.value = Math.max(min, Math.min(max, value));
+    calculateRmax();
+  }
+});
+
+ptRange.addEventListener('input', () => {
+  ptInput.value = ptRange.value;
+  calculateRmax();
+});
+
+ptInput.addEventListener('input', () => {
+  const min = Number(ptRange.min);
+  const max = Number(ptRange.max);
+  const value = Number(ptInput.value);
+
+  if (Number.isFinite(value)) {
+    ptRange.value = Math.max(min, Math.min(max, value));
+    calculateRmax();
+  }
+});
 
 function sliderToSeconds(position) {
   const fraction =
@@ -136,6 +156,42 @@ tintInput.addEventListener('change', () => {
 
   calculate();
 });
+
+function formatNumber(value, decimals = 3) {
+  return Number(value).toLocaleString('en-US', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
+}
+
+function calculateRmax() {
+  const Dt = parseFloat(document.getElementById('dt').value);
+  const Dr = parseFloat(document.getElementById('dr').value);
+  const Pt = parseFloat(document.getElementById('pt').value) * 1000; // Convert kW to W
+  const freqMHz = parseFloat(document.getElementById('freq').value);
+  const etaT = parseFloat(document.getElementById('etaT').value);
+  const etaR = parseFloat(document.getElementById('etaR').value);
+  const L = parseFloat(document.getElementById('L').value);
+  const tint = parseDuration(document.getElementById('tint').value);
+  const rho = parseFloat(document.getElementById('rho').value);
+  const Tsys = parseFloat(document.getElementById('Tsys').value);
+
+  if ([Dt, Dr, Pt, freqMHz, etaT, etaR, L, tint, rho, Tsys].some(v => !isFinite(v) || v <= 0)) {
+    document.getElementById('resultText').textContent = 'Please enter valid positive numbers for all parameters.';
+    return;
+  }
+
+  const freqHz = freqMHz * 1e6;
+  const lambda = c / freqHz;
+  const numerator = Math.PI * Dt * Dr;
+  const insideSqrt = Pt * etaT * etaR * L * tint / (rho * kB * Tsys);
+  const RmaxMeters = (numerator / (4 * lambda)) * Math.sqrt(insideSqrt);
+  const parsecInMeters = 3.0856775814913673e16;
+  const RmaxParsec = RmaxMeters / parsecInMeters;
+  const RmaxLy = RmaxParsec * 3.26156;
+
+  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec, )}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy, 2)}</strong> Light years<br>t<sub>int</sub> = <strong>${Math.round(tint)}</strong>`;
+}
 
 
 window.addEventListener('DOMContentLoaded', () => {
