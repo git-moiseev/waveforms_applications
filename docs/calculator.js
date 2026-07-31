@@ -13,7 +13,7 @@ function calculateRmax() {
   const etaT = parseFloat(document.getElementById('etaT').value);
   const etaR = parseFloat(document.getElementById('etaR').value);
   const L = parseFloat(document.getElementById('L').value);
-  const tint = parseFloat(document.getElementById('tint').value);
+  const tint = parseDuration(document.getElementById('tint').value);
   const rho = parseFloat(document.getElementById('rho').value);
   const Tsys = parseFloat(document.getElementById('Tsys').value);
 
