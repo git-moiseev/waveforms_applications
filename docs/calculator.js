@@ -1,64 +1,52 @@
+'use strict';
+
 const kB = 1.380649e-23;
 const c = 299792458;
-const minSeconds = 1;
-const maxSeconds = 365 * 24 * 60 * 60; // one year
 
-const tintInput = document.getElementById('tint');
-const tintRange = document.getElementById('tint-range');
+const minSeconds = 1;
+const maxSeconds = 365 * 24 * 60 * 60;
+
 const dtInput = document.getElementById('dt');
 const dtRange = document.getElementById('dt-range');
+
 const drInput = document.getElementById('dr');
 const drRange = document.getElementById('dr-range');
+
 const ptInput = document.getElementById('pt');
 const ptRange = document.getElementById('pt-range');
 
-dtRange.addEventListener('input', () => {
-  dtInput.value = dtRange.value;
-  calculateRmax();
-});
+const tintInput = document.getElementById('tint');
+const tintRange = document.getElementById('tint-range');
 
-dtInput.addEventListener('input', () => {
-  const min = Number(dtRange.min);
-  const max = Number(dtRange.max);
-  const value = Number(dtInput.value);
+const signalWaves = document.getElementById('signal-waves');
+const resultText = document.getElementById('resultText');
 
-  if (Number.isFinite(value)) {
-    dtRange.value = Math.max(min, Math.min(max, value));
-    calculateRmax();
-  }
-});
+function clamp(value, minimum, maximum) {
+  return Math.min(maximum, Math.max(minimum, value));
+}
 
-drRange.addEventListener('input', () => {
-  drInput.value = drRange.value;
-  calculateRmax();
-});
+function connectNumberAndRange(numberInput, rangeInput, onUpdate) {
+  rangeInput.addEventListener('input', () => {
+    numberInput.value = rangeInput.value;
+    onUpdate();
+  });
 
-drInput.addEventListener('input', () => {
-  const min = Number(drRange.min);
-  const max = Number(drRange.max);
-  const value = Number(drInput.value);
+  numberInput.addEventListener('input', () => {
+    const value = Number(numberInput.value);
 
-  if (Number.isFinite(value)) {
-    drRange.value = Math.max(min, Math.min(max, value));
-    calculateRmax();
-  }
-});
+    if (!Number.isFinite(value)) {
+      return;
+    }
 
-ptRange.addEventListener('input', () => {
-  ptInput.value = ptRange.value;
-  calculateRmax();
-});
+    rangeInput.value = clamp(
+      value,
+      Number(rangeInput.min),
+      Number(rangeInput.max)
+    );
 
-ptInput.addEventListener('input', () => {
-  const min = Number(ptRange.min);
-  const max = Number(ptRange.max);
-  const value = Number(ptInput.value);
-
-  if (Number.isFinite(value)) {
-    ptRange.value = Math.max(min, Math.min(max, value));
-    calculateRmax();
-  }
-});
+    onUpdate();
+  });
+}
 
 function sliderToSeconds(position) {
   const fraction =
@@ -77,22 +65,21 @@ function secondsToSlider(seconds) {
 
   return Math.round(
     Number(tintRange.min) +
-    fraction *
-      (Number(tintRange.max) - Number(tintRange.min))
+    fraction * (Number(tintRange.max) - Number(tintRange.min))
   );
 }
 
 function formatDuration(totalSeconds) {
-  totalSeconds = Math.round(totalSeconds);
+  let remaining = Math.round(totalSeconds);
 
-  const days = Math.floor(totalSeconds / 86400);
-  totalSeconds %= 86400;
+  const days = Math.floor(remaining / 86400);
+  remaining %= 86400;
 
-  const hours = Math.floor(totalSeconds / 3600);
-  totalSeconds %= 3600;
+  const hours = Math.floor(remaining / 3600);
+  remaining %= 3600;
 
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
 
   return [
     days && `${days}d`,
@@ -107,7 +94,6 @@ function formatDuration(totalSeconds) {
 function parseDuration(value) {
   const text = String(value).trim().toLowerCase();
 
-  // A number without a unit is interpreted as seconds.
   if (/^\d+(?:\.\d+)?$/.test(text)) {
     return Number(text);
   }
@@ -129,17 +115,128 @@ function parseDuration(value) {
     total += Number(match[1]) * units[match[2]];
   }
 
-  // Reject unknown characters or incomplete expressions.
-  const remainder = text.replace(pattern, '').replace(/\s+/g, '');
+  const remainder = text
+    .replace(pattern, '')
+    .replace(/\s+/g, '');
 
   return remainder === '' && total > 0 ? total : NaN;
 }
+
+function formatNumber(value, decimals = 3) {
+  return Number(value)
+    .toLocaleString('en-US', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    })
+    .replace(/,/g, '\u202F');
+}
+
+function updatePowerEffect(value) {
+  const minPower = Number(ptRange.min);
+  const maxPower = Number(ptRange.max);
+
+  const power = clamp(
+    Number(value) || minPower,
+    minPower,
+    maxPower
+  );
+
+  const level =
+    (Math.log10(power) - Math.log10(minPower)) /
+    (Math.log10(maxPower) - Math.log10(minPower));
+
+  /*
+   * Делает верхнюю часть диапазона визуально выразительнее.
+   * При 1000 kW visualLevel ≈ 0.49,
+   * при 10000 kW visualLevel = 1.
+   */
+  const visualLevel = Math.pow(level, 2.5);
+
+  const opacity = 0.01 + visualLevel * 0.55;
+  const glowRadius = 1 + visualLevel * 12;
+  const glowOpacity = 0.01 + visualLevel * 0.35;
+
+  signalWaves.style.opacity = opacity.toFixed(4);
+
+  const dot = signalWaves;
+
+  dot.style.setProperty("--dot-scale", (0.8 + visualLevel * 0.6).toFixed(2));
+
+  signalWaves.style.filter =
+    `blur(0.3px) drop-shadow(` +
+    `0 0 ${glowRadius.toFixed(2)}px ` +
+    `rgba(125, 211, 252, ${glowOpacity.toFixed(4)})` +
+    `)`;
+}
+
+function calculateRmax() {
+  const Dt = Number(dtInput.value);
+  const Dr = Number(drInput.value);
+  const Pt = Number(ptInput.value) * 1000;
+
+  const freqMHz = Number(document.getElementById('freq').value);
+  const etaT = Number(document.getElementById('etaT').value);
+  const etaR = Number(document.getElementById('etaR').value);
+  const L = Number(document.getElementById('L').value);
+  const rho = Number(document.getElementById('rho').value);
+  const Tsys = Number(document.getElementById('Tsys').value);
+  const tint = parseDuration(tintInput.value);
+
+  const values = [
+    Dt,
+    Dr,
+    Pt,
+    freqMHz,
+    etaT,
+    etaR,
+    L,
+    rho,
+    Tsys,
+    tint
+  ];
+
+  if (values.some(value => !Number.isFinite(value) || value <= 0)) {
+    resultText.textContent =
+      'Please enter valid positive values for all parameters.';
+    return;
+  }
+
+  const freqHz = freqMHz * 1e6;
+  const lambda = c / freqHz;
+
+  const numerator = Math.PI * Dt * Dr;
+  const insideSqrt =
+    Pt * etaT * etaR * L * tint /
+    (rho * kB * Tsys);
+
+  const RmaxMeters =
+    (numerator / (4 * lambda)) *
+    Math.sqrt(insideSqrt);
+
+  const parsecInMeters = 3.0856775814913673e16;
+  const RmaxParsec = RmaxMeters / parsecInMeters;
+  const RmaxLy = RmaxParsec * 3.26156;
+
+  resultText.innerHTML =
+    `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec, 3)}</strong> pc<br>` +
+    `R<sub>max</sub> = <strong>${formatNumber(RmaxLy, 2)}</strong> light-years<br>` +
+    `t<sub>int</sub> = <strong>${formatNumber(tint, 0)}</strong> s`;
+}
+
+function updatePowerAndCalculation() {
+  updatePowerEffect(ptInput.value);
+  calculateRmax();
+}
+
+connectNumberAndRange(dtInput, dtRange, calculateRmax);
+connectNumberAndRange(drInput, drRange, calculateRmax);
+connectNumberAndRange(ptInput, ptRange, updatePowerAndCalculation);
 
 tintRange.addEventListener('input', () => {
   const seconds = sliderToSeconds(Number(tintRange.value));
 
   tintInput.value = formatDuration(seconds);
-  calculate(); // if immediate recalculation is required
+  calculateRmax();
 });
 
 tintInput.addEventListener('change', () => {
@@ -149,65 +246,21 @@ tintInput.addEventListener('change', () => {
     seconds = minSeconds;
   }
 
-  seconds = Math.min(maxSeconds, Math.max(minSeconds, seconds));
+  seconds = clamp(seconds, minSeconds, maxSeconds);
 
   tintInput.value = formatDuration(seconds);
   tintRange.value = secondsToSlider(seconds);
 
-  calculate();
+  calculateRmax();
 });
 
-function formatNumber(value, decimals = 3) {
-  return Number(value).toLocaleString('fr-FR', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
+document
+  .querySelectorAll('#Tsys, #freq, #etaT, #etaR, #L, #rho')
+  .forEach(input => {
+    input.addEventListener('input', calculateRmax);
   });
-}
 
-function calculateRmax() {
-  const Dt = parseFloat(document.getElementById('dt').value);
-  const Dr = parseFloat(document.getElementById('dr').value);
-  const Pt = parseFloat(document.getElementById('pt').value) * 1000; // Convert kW to W
-  const freqMHz = parseFloat(document.getElementById('freq').value);
-  const etaT = parseFloat(document.getElementById('etaT').value);
-  const etaR = parseFloat(document.getElementById('etaR').value);
-  const L = parseFloat(document.getElementById('L').value);
-  const tint = parseDuration(document.getElementById('tint').value);
-  const rho = parseFloat(document.getElementById('rho').value);
-  const Tsys = parseFloat(document.getElementById('Tsys').value);
+tintRange.value = secondsToSlider(parseDuration(tintInput.value));
 
-  if ([Dt, Dr, Pt, freqMHz, etaT, etaR, L, tint, rho, Tsys].some(v => !isFinite(v) || v <= 0)) {
-    document.getElementById('resultText').textContent = 'Please enter valid positive numbers for all parameters.';
-    return;
-  }
-
-  const freqHz = freqMHz * 1e6;
-  const lambda = c / freqHz;
-  const numerator = Math.PI * Dt * Dr;
-  const insideSqrt = Pt * etaT * etaR * L * tint / (rho * kB * Tsys);
-  const RmaxMeters = (numerator / (4 * lambda)) * Math.sqrt(insideSqrt);
-  const parsecInMeters = 3.0856775814913673e16;
-  const RmaxParsec = RmaxMeters / parsecInMeters;
-  const RmaxLy = RmaxParsec * 3.26156;
-
-  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec, )}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy, 2)}</strong> Light years<br>t<sub>int</sub> = <strong>${formatNumber(tint, 0)}</strong>`;
-}
-
-
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('calculateButton').addEventListener('click', calculateRmax);
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  const calculateButton = document.getElementById('calculateButton');
-
-  calculateRmax(); // initial calculation
-
-  calculateButton.addEventListener('click', calculateRmax);
-
-  document
-    .querySelectorAll('input, select')
-    .forEach(element => {
-      element.addEventListener('input', calculateRmax);
-    });
-});
+updatePowerEffect(ptInput.value);
+calculateRmax();

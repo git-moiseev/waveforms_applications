@@ -7,68 +7,86 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Decorative signal layer. It does not affect document layout. -->
+  <div id="signal-waves" aria-hidden="true"></div>
+
   <main class="container">
     <section class="panel">
       <h2>Maximum Range Calculator</h2>
+
       <div class="formula">
-        <!-- <p><strong>Formula</strong></p> -->
-        <p>R<sub>max</sub> = π D<sub>t</sub> D<sub>r</sub> / (4 λ) × √(P<sub>t</sub> η<sub>t</sub> η<sub>r</sub> L t<sub>int</sub> / (ρ<sub>acq</sub> k<sub>B</sub> T<sub>sys</sub>))</p>
+        <p>
+          R<sub>max</sub> =
+          π D<sub>t</sub> D<sub>r</sub> / (4 λ)
+          × √(P<sub>t</sub> η<sub>t</sub> η<sub>r</sub>
+          L t<sub>int</sub> /
+          (ρ<sub>acq</sub> k<sub>B</sub> T<sub>sys</sub>))
+        </p>
       </div>
-  </section>
+    </section>
 
     <section class="panel">
       <h2>Parameters</h2>
+
       <div class="grid">
         <label>
           <span class="nowrap">Transmitter diameter D<sub>t</sub>, m</span>
-          <input id="dt" type="number" value="10" min="10" step="10">
-          <input id="dt-range" type="range" value="10" min="10" max="1000" step="10" oninput="document.getElementById('dt').value = this.value">
+          <input id="dt" type="number" value="10" min="10" max="1000" step="10">
+          <input id="dt-range" type="range" value="10" min="10" max="1000" step="10">
         </label>
+
         <label>
           <span class="nowrap">Receiver diameter D<sub>r</sub>, m</span>
-          <input id="dr" type="number" value="10" min="10" step="10">
-          <input id="dr-range" type="range" value="10" min="10" max="1000" step="10" oninput="document.getElementById('dr').value = this.value">
+          <input id="dr" type="number" value="10" min="10" max="1000" step="10">
+          <input id="dr-range" type="range" value="10" min="10" max="1000" step="10">
         </label>
+
         <label>
           <span class="nowrap">Transmit power P<sub>t</sub>, kW</span>
-          <input id="pt" type="number" value="100" min="1" step="1">
-          <input id="pt-range" type="range" value="100" min="1" max="10000" step="1" oninput="document.getElementById('pt').value = this.value">
+          <input id="pt" type="number" value="100" min="1" max="10000" step="1">
+          <input id="pt-range" type="range" value="100" min="1" max="10000" step="1">
         </label>
+
         <label>
           <span class="nowrap">Coherent integration t<sub>int</sub></span>
-          <input id="tint" type="text" value="1" min="1" step="1">
-          <input id="tint-range" type="range" value="1" min="1" max="100000000" step="1" oninput="document.getElementById('tint').value = this.value">
-        </label>    
+          <input id="tint" type="text" value="1s">
+          <input id="tint-range" type="range" value="1" min="1" max="100000000" step="1">
+        </label>
+
         <label>
           <span class="nowrap">T<sub>sys</sub>, K</span>
-          <input id="Tsys" type="number" value="30" min="0" step="0.1">
+          <input id="Tsys" type="number" value="30" min="0.1" step="0.1">
         </label>
+
         <label>
           <span class="nowrap">Frequency f, MHz</span>
           <input id="freq" type="number" value="1420.405751" min="1000" step="1" readonly>
         </label>
+
         <label>
           <span class="nowrap">Transmitter efficiency η<sub>t</sub></span>
-          <input id="etaT" type="number" value="0.6" min="0" max="1" step="0.01" readonly>
+          <input id="etaT" type="number" value="0.6" min="0.01" max="1" step="0.01" readonly>
         </label>
+
         <label>
           <span class="nowrap">Receiver efficiency η<sub>r</sub></span>
-          <input id="etaR" type="number" value="0.6" min="0" max="1" step="0.01" readonly>
+          <input id="etaR" type="number" value="0.6" min="0.01" max="1" step="0.01" readonly>
         </label>
+
         <label>
           <span class="nowrap">Link loss factor L</span>
-          <input id="L" type="number" value="1" min="0" max="1" step="0.01">
+          <input id="L" type="number" value="1" min="0.01" max="1" step="0.01">
         </label>
+
         <label>
           <span class="nowrap">ρ<sub>acq</sub></span>
-          <input id="rho" type="number" value="30" min="0" step="0.1">
+          <input id="rho" type="number" value="30" min="0.1" step="0.1">
         </label>
-      <button id="calculateButton" hidden>Calculate R<sub>max</sub></button> 
       </div>
 
       <div class="result" id="resultBox">
         <strong>Result:</strong>
-        <p id="resultText">Enter values and press Calculate.</p>
+        <p id="resultText">Enter valid values.</p>
       </div>
     </section>
 
@@ -77,7 +95,7 @@
       <ul>
         <li>Antenna diameters are in meters.</li>
         <li>Transmitter power is in kilowatts.</li>
-        <li>The result is shown in parsecs and light years.</li>
+        <li>The result is shown in parsecs and light-years.</li>
         <li>At 1420.405751 MHz, the wavelength is about 0.211061 m.</li>
       </ul>
     </section>
