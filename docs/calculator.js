@@ -158,7 +158,7 @@ tintInput.addEventListener('change', () => {
 });
 
 function formatNumber(value, decimals = 3) {
-  return Number(value).toLocaleString('en-US', {
+  return Number(value).toLocaleString('fr-FR', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals
   });
@@ -190,7 +190,7 @@ function calculateRmax() {
   const RmaxParsec = RmaxMeters / parsecInMeters;
   const RmaxLy = RmaxParsec * 3.26156;
 
-  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec, )}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy, 2)}</strong> Light years<br>t<sub>int</sub> = <strong>${Math.round(tint)}</strong>`;
+  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec, )}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy, 2)}</strong> Light years<br>t<sub>int</sub> = <strong>${formatNumber(tint, 0)}</strong>`;
 }
 
 
