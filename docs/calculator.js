@@ -31,7 +31,7 @@ function calculateRmax() {
   const RmaxParsec = RmaxMeters / parsecInMeters;
   const RmaxLy = RmaxParsec * 3.26156;
 
-  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec)}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy)}</strong> Light years<br>λ = <strong>${formatNumber(lambda)}</strong> m`;
+  document.getElementById('resultText').innerHTML = `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec)}</strong> pc<br>R<sub>max</sub> = <strong>${formatNumber(RmaxLy)}</strong> Light years<br>t<sub>int</sub> = <strong>${formatNumber(tint)}</strong>`;
 }
 
 const tintInput = document.getElementById('tint');
@@ -84,7 +84,14 @@ function formatDuration(totalSeconds) {
     .join(' ');
 }
 
-function parseDuration(text) {
+function parseDuration(value) {
+  const text = String(value).trim().toLowerCase();
+
+  // A number without a unit is interpreted as seconds.
+  if (/^\d+(?:\.\d+)?$/.test(text)) {
+    return Number(text);
+  }
+
   const units = {
     y: 365 * 86400,
     d: 86400,
@@ -93,16 +100,19 @@ function parseDuration(text) {
     s: 1
   };
 
-  let total = 0;
-  let found = false;
-  const pattern = /(\d+(?:\.\d+)?)\s*([ydhms])/gi;
+  const pattern = /(\d+(?:\.\d+)?)\s*([ydhms])/g;
 
-  for (const match of text.matchAll(pattern)) {
-    total += Number(match[1]) * units[match[2].toLowerCase()];
-    found = true;
+  let total = 0;
+  let match;
+
+  while ((match = pattern.exec(text)) !== null) {
+    total += Number(match[1]) * units[match[2]];
   }
 
-  return found ? Math.round(total) : Number(text);
+  // Reject unknown characters or incomplete expressions.
+  const remainder = text.replace(pattern, '').replace(/\s+/g, '');
+
+  return remainder === '' && total > 0 ? total : NaN;
 }
 
 tintRange.addEventListener('input', () => {
