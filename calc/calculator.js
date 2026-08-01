@@ -237,11 +237,10 @@ function calculateRmax() {
   const RmaxLy = RmaxParsec * 3.26156;
 
   resultText.innerHTML =
-    `R<sub>max</sub> (pc) = ${formatNumber(RmaxParsec, 2)}<br>` 
-  + `R<sub>max</sub> (ly) = ${formatNumber(RmaxLy, 2)}<br>` 
-  + `t<sub>int</sub>&nbsp&nbsp&nbsp (s) = ${formatNumber(tint, 0)}<br>` 
-//    + `B = <strong>${formatNumber(B, B < 0.01 ? 6 : 3)}</strong> Hz`
-    ;
+    `<span class="label">R<sub>max</sub></span> <span class="eq">(pc)</span> <span class="eq">=</span><span class="value">${formatNumber(RmaxParsec, 2)}</span>` 
+  + `<span class="label">R<sub>max</sub></span> <span class="eq">(ly)</span> <span class="eq">=</span><span class="value">${formatNumber(RmaxLy, 2)}</span>`
+  + `<span class="label">t<sub>int</sub></span> <span class="eq">(s)</span>  <span class="eq">=</span><span class="value">${formatNumber(tint, 0)}.00</span>`
+  ;
 }
 
 function updatePowerAndCalculation() {
