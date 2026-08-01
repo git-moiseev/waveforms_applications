@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Noncoherent Range Calculator</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23061018'/%3E%3Ccircle cx='47' cy='17' r='3.5' fill='%236dffb3'/%3E%3Cg fill='none' stroke='%236dffb3' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M52 12a8 8 0 0 1 0 10'/%3E%3Cpath d='M56 8a14 14 0 0 1 0 18'/%3E%3C/g%3E%3Cpath d='M12 21c7 19 17 27 34 26-8 9-22 11-31 2-8-8-8-20-3-28Z' fill='%23112838' stroke='%23b9e9f5' stroke-width='3' stroke-linejoin='round'/%3E%3Cpath d='m27 43-5 12m12-10 8 10M18 55h29' fill='none' stroke='%23b9e9f5' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="calc/style.css">
   <link rel="stylesheet" href="calc/display.css">
 </head>
@@ -20,6 +21,74 @@
     <section class="panel panel-title">
       <span class="panel-kicker">INTERSTELLAR LINK ANALYSIS</span>
       <div id="resultText" class="display-value"> Enter valid values </div>
+    </section>
+
+    <section class="panel distance-panel" aria-labelledby="distance-scale-title">
+      <div class="distance-heading">
+        <div>
+          <span class="panel-kicker">Logarithmic Distance Scale</span>
+          <!-- <h2 id="distance-scale-title">How far does the signal reach?</h2> -->
+        </div>
+        <div id="distanceScaleStatus" class="distance-status">R<sub>max</sub></div>
+      </div>
+
+      <div class="distance-scale" role="img" aria-label="Logarithmic distance scale from 0.1 to 10,000 light-years">
+        <div class="distance-axis" aria-hidden="true"></div>
+
+        <div class="distance-landmark major lower edge-start" style="--position: 0%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>0.1 ly</strong></span>
+        </div>
+        <div class="distance-landmark lower" style="--position: 18%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Oort Cloud</strong><small>≈ 0.8 ly</small></span>
+        </div>
+        <div class="distance-landmark upper" style="--position: 24%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Outer edge of the Oort Cloud</strong><small>≈ 1.6 ly</small></span>
+        </div>
+        <div class="distance-landmark lower" style="--position: 32.55%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Proxima Centauri</strong><small>4.24 ly</small></span>
+        </div>
+        <div class="distance-landmark upper" style="--position: 38.69%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Sirius</strong><small>8.6 ly</small></span>
+        </div>
+        <div class="distance-landmark upper" style="--position: 47.96%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Vega</strong><small>25 ly</small></span>
+        </div>
+        <div class="distance-landmark lower" style="--position: 52.2%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Trappist-1</strong><small>41 ly</small></span>
+        </div>                                    
+        <div class="distance-landmark upper" style="--position: 56%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Aldebaran</strong><small>65 ly</small></span>
+        </div>
+        <div class="distance-landmark major lower" style="--position: 60%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>100 ly</strong></span>
+        </div>
+        <div class="distance-landmark lower" style="--position: 68%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Spica</strong><small>≈ 250 ly</small></span>
+        </div>                
+        <div class="distance-landmark upper" style="--position: 74.81%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Betelgeuse</strong><small>≈ 550 ly</small></span>
+        </div>
+        <div class="distance-landmark major lower stagger" style="--position: 80%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>1,000 ly</strong></span>
+        </div>
+        <div class="distance-landmark upper" style="--position: 88.5%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Deneb</strong><small>≈ 2,600 ly</small></span>
+        </div>
+        <div class="distance-landmark lower" style="--position: 92%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>M8</strong><small>≈ 4000 ly</small></span>
+        </div>
+        <div class="distance-landmark upper" style="--position: 96.3%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>Crab</strong><small>≈ 6,500 ly</small></span>
+        </div>        
+        <div class="distance-landmark major lower edge stagger" style="--position: 100%">
+          <span class="landmark-tick"></span><span class="landmark-label"><strong>10,000 ly</strong></span>
+        </div>
+
+        <div id="rangeMarker" class="range-marker" style="--position: 0%">
+          <span class="range-marker-line"></span>
+          <span id="rangeMarkerLabel" class="range-marker-label">R<sub>max</sub></span>
+        </div>
+      </div>
     </section>
 
     <section class="panel panel-parameters">

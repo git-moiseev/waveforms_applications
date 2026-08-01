@@ -9,6 +9,12 @@ const maxSeconds = 365 * 24 * 60 * 60;
 
 const signalWaves = document.getElementById('signal-waves');
 const resultText = document.getElementById('resultText');
+const rangeMarker = document.getElementById('rangeMarker');
+const rangeMarkerLabel = document.getElementById('rangeMarkerLabel');
+const distanceScaleStatus = document.getElementById('distanceScaleStatus');
+
+const distanceScaleMinLy = 0.1;
+const distanceScaleMaxLy = 10000;
 
 function clamp(value, minimum, maximum) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -158,6 +164,42 @@ function formatNumber(value, decimals = 3) {
     .replace(/,/g, '\u202F');
 }
 
+function formatDistanceLy(value) {
+  if (value >= 1000) {
+    return `${formatNumber(value, 0)} ly`;
+  }
+
+  if (value >= 10) {
+    return `${formatNumber(value, 1)} ly`;
+  }
+
+  return `${formatNumber(value, 2)} ly`;
+}
+
+function updateDistanceScale(distanceLy) {
+  const safeDistance = Math.max(distanceLy, Number.MIN_VALUE);
+  const logarithmicPosition =
+    Math.log10(safeDistance / distanceScaleMinLy) /
+    Math.log10(distanceScaleMaxLy / distanceScaleMinLy) * 100;
+  const markerPosition = clamp(logarithmicPosition, 0, 100);
+
+  rangeMarker.style.setProperty('--position', `${markerPosition}%`);
+  rangeMarker.classList.toggle('below-scale', distanceLy < distanceScaleMinLy);
+  rangeMarker.classList.toggle('above-scale', distanceLy > distanceScaleMaxLy);
+
+  let boundaryNote = '';
+  if (distanceLy < distanceScaleMinLy) {
+    boundaryNote = ' · below scale';
+  } else if (distanceLy > distanceScaleMaxLy) {
+    boundaryNote = ' · beyond 10,000 ly';
+  }
+
+  rangeMarkerLabel.innerHTML =
+    `R<sub>max</sub><strong>${formatDistanceLy(distanceLy)}</strong>`;
+  distanceScaleStatus.innerHTML =
+    `R<sub>max</sub> = ${formatDistanceLy(distanceLy)}${boundaryNote}`;
+}
+
 function updatePowerEffect(value) {
   const minimum = 1;
   const maximum = 1000000;
@@ -205,6 +247,8 @@ function calculateRmax() {
   if (values.some(value => !Number.isFinite(value) || value <= 0)) {
     resultText.textContent =
       'Please enter valid positive values for all parameters.';
+    rangeMarker.classList.add('invalid');
+    distanceScaleStatus.textContent = 'Enter valid values';
     return;
   }
 
@@ -235,6 +279,9 @@ function calculateRmax() {
 
   const RmaxParsec = RmaxMeters / parsecInMeters;
   const RmaxLy = RmaxParsec * 3.26156;
+
+  rangeMarker.classList.remove('invalid');
+  updateDistanceScale(RmaxLy);
 
   resultText.innerHTML =
     `<span class="label">R<sub>max</sub></span> <span class="eq">(pc)</span> <span class="eq">=</span><span class="value">${formatNumber(RmaxParsec, 2)}</span>` 
