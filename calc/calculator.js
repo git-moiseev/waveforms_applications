@@ -256,7 +256,7 @@ connectLinearPair('L', 'L-range');
 
 connectLogPair('pt', 'pt-range', 1, 1000000, 6, updatePowerAndCalculation);
 connectLogPair('bandwidth', 'bandwidth-range', 0.000001, 1000000, 6);
-connectLogPair('Tsys', 'Tsys-range', 1, 10000, 6);
+connectLogPair('Tsys', 'Tsys-range', 3, 500, 6);
 connectLogPair('freq', 'freq-range', 10, 100000, 8);
 connectLogPair('rho', 'rho-range', 0.1, 1000, 6);
 
