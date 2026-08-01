@@ -1,122 +1,166 @@
-# Application of Hierarchical Waveforms to Interstellar Beacons
+# Waveform Applications
 
-## Overview
+This repository accompanies the study of practical applications of a computationally efficient narrowband waveform originally developed for blind signal acquisition.
 
-This repository accompanies the paper:
-
-> **Application of Hierarchical Waveforms to Interstellar Beacons**
-
-The paper investigates whether the hierarchical two-frequency waveform introduced in the companion work
-
-> **Waveform Design for Computationally Efficient Blind Acquisition**
-
-is suitable for long-range interstellar communication.
-
-Rather than proposing a new detection algorithm, this work evaluates the waveform under realistic astrophysical conditions, including Doppler motion, interstellar propagation, scintillation, receiver uncertainty, and practical beacon design constraints.
+The primary focus is long-range radio communication under conditions where the receiver has **no prior knowledge** of the transmitted waveform, timing, or protocol. The repository combines theoretical analysis with an interactive communication-range calculator.
 
 ---
 
-## Motivation
+## Repository Contents
 
-Most interstellar beacon concepts focus primarily on minimizing transmitter energy or maximizing received signal power.
+### 1. Communication Range from Transmitter and Receiver Parameters
 
-This work considers a different optimization objective:
+Derives the communication-range equation for blind noncoherent signal acquisition.
 
-> **Minimize the computational cost required for an unknown receiver to discover and recognize an artificial signal.**
+Topics include:
 
-The underlying assumption is that an extraterrestrial receiver has no prior knowledge of
-
-* the modulation,
-* the protocol,
-* the packet format,
-* the transmission schedule,
-* or even the existence of the beacon.
-
-The beacon should therefore reveal its own structure as efficiently as possible.
-
----
-
-## Companion Paper
-
-This paper builds upon the theoretical framework developed in
-
-**Waveform Design for Computationally Efficient Blind Acquisition**
-
-where the hierarchical two-frequency waveform and the blind acquisition strategy are introduced.
-
-The present work addresses a different question:
-
-> **Does this waveform remain effective after propagation through the interstellar medium?**
+- Friis transmission equation
+- antenna gain and effective aperture
+- receiver system temperature
+- detector bandwidth
+- noncoherent integration
+- acquisition threshold
+- communication-range scaling laws
+- comparison with conventional SETI range calculators
 
 ---
 
-## Topics Covered
+### 2. Communication Range Parameter Table
 
-The paper investigates:
+Provides communication-range estimates for representative combinations of
 
-* microwave frequency selection;
-* Doppler effects caused by relative motion;
-* interstellar plasma dispersion;
-* multipath scattering;
-* interstellar scintillation;
-* robustness of hierarchical frequency geometry;
-* practical beacon protocol design;
-* repeated transmissions and long-term detectability;
-* computational implications for an unknown receiver.
+- transmitter power,
+- antenna diameter,
+- receiver system temperature,
+- integration time.
+
+The tables are calculated using the noncoherent acquisition model and are intended as quick engineering reference values.
 
 ---
 
-## Scope
+### 3. Propagation Through a Dispersive and Scintillating Channel
 
-The analysis concentrates on relatively nearby Galactic targets (approximately 1000 light-years), where interstellar propagation effects are well understood and can be quantified using established astrophysical models.
+Discusses propagation effects that influence narrowband interstellar communication, including
 
-The objective is not to optimize transmitter power, but to determine whether the proposed waveform preserves its computational advantages after realistic propagation.
+- plasma dispersion,
+- Doppler shift,
+- scintillation,
+- coherence bandwidth,
+- coherence time,
+- practical propagation losses.
+
+The objective is to estimate how interstellar propagation modifies the ideal communication range.
 
 ---
 
-## Main Result
+## Interactive Communication Range Calculator
 
-The analysis indicates that, for microwave carrier frequencies and practical frequency-state separations,
+The repository includes a browser-based calculator that implements the same mathematical model used throughout the documentation.
 
-* interstellar propagation significantly affects received amplitude and phase,
-* but does not destroy the underlying two-frequency geometry of the waveform.
+Features include:
 
-Consequently, the hierarchical blind-acquisition strategy developed in the companion paper remains applicable under typical interstellar propagation conditions.
+- interactive parameter adjustment;
+- blind noncoherent detection model;
+- real-time communication-range calculation;
+- logarithmic sliders for wide dynamic ranges;
+- detector bandwidth and integration-time modelling;
+- visualization of transmitter power.
 
-The dominant limitation is expected to be reduced detection sensitivity due to scintillation rather than corruption of the transmitted waveform.
+Open:
+
+```
+index.html
+```
+
+in any modern web browser.
 
 ---
 
 ## Repository Structure
 
+```text
+.
+├── 1. Communication Range from Transmitter and Receiver Parameters.md
+├── 2. Communication Range Parameter Table.md
+├── 3. Propagation Through a Dispersive and Scintillating Channel.md
+├── index.html
+├── calc
+│   ├── calculator.js
+│   ├── style.css
+│   └── bg.png
+├── LICENSE
+└── README.md
 ```
-1. Communication Range Calclulauions
-2. Communication Range Result Table
-3. Propagation Through the Interstellar Medium
-6. Robustness of Hierarchical Waveforms
-7. Beacon Protocol Design
-8. Detection Strategy
-9. Discussion
-10. Conclusions
+
+---
+
+## Mathematical Model
+
+The communication-range calculator is based on blind **noncoherent energy detection**.
+
+The maximum detection range is
+
+```math
+R_{\max}=
+\frac{\pi D_tD_r}{4\lambda}
+\sqrt{
+\frac{P_t\eta_t\eta_rL}
+{\rho_{\mathrm{acq}}k_{\mathrm B}T_{\mathrm{sys}}}
+}
+\left(
+\frac{t_{\mathrm{int}}}{B}
+\right)^{1/4}
 ```
+
+where
+
+- $D_t,D_r$ — transmitter and receiver antenna diameters;
+- $P_t$ — transmitter power;
+- $T_{\mathrm{sys}}$ — receiver system temperature;
+- $B$ — detector bandwidth;
+- $t_{\mathrm{int}}$ — noncoherent integration time;
+- $\rho_{\mathrm{acq}}$ — acquisition threshold.
+
+---
+
+## Assumptions
+
+Unless stated otherwise, the calculations assume
+
+- free-space propagation;
+- operation near the neutral hydrogen line (1420.405751 MHz);
+- blind noncoherent acquisition;
+- stationary Gaussian receiver noise;
+- ideal antenna pointing.
+
+Propagation losses beyond free space are discussed separately in the propagation chapter.
 
 ---
 
 ## Intended Audience
 
-This work may be of interest to researchers in
+This repository may be useful for researchers and engineers working in
 
-* SETI,
-* radio astronomy,
-* signal processing,
-* digital communications,
-* detection theory,
-* space communications.
+- SETI;
+- radio astronomy;
+- deep-space communications;
+- detection theory;
+- microwave engineering;
+- phased-array systems;
+- weak-signal detection.
 
 ---
 
 ## Status
 
-Work in progress.
+The repository is under active development.
 
-Comments, corrections, alternative analyses, and critical review are welcome.
+Future work includes
+
+- additional propagation models;
+- computational complexity analysis;
+- receiver architecture comparisons;
+- waveform optimization;
+- additional interactive tools.
+
+Contributions, comments, and technical discussions are welcome.
