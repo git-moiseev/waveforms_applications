@@ -26,6 +26,26 @@ body {
   background-attachment: fixed;
 }
 
+button {
+  margin-top: 28px;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #60a5fa, #0ea5e9);
+  color: #f8fafc;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: 0 18px 50px rgba(14, 165, 233, 0.28);
+}
+
+button:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #38bdf8, #38bdf8);
+}
+
 /*
  * Signal rings above the body background and below the calculator.
  * This fixed element does not participate in normal document flow.
@@ -89,6 +109,13 @@ body {
     filter 0.15s linear;
 
   animation: signal-expansion 18s ease-in-out infinite alternate;
+}
+
+.reset-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
 }
 
 
