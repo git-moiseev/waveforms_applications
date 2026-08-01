@@ -117,15 +117,15 @@
       </div> 
       <ul>
         <li>All antenna diameters D<sub>t</sub> and D<sub>r</sub> are physical reflector diameters in meters.</li>
+        <li>The default frequency is the neutral-hydrogen line at 1420.405751 MHz, corresponding to a wavelength λ of approximately 0.211061 m.</li>
         <li>Transmitter power P<sub>t</sub> is the total RF power delivered to the transmitting antenna, expressed in kilowatts.</li>
         <li>Aperture efficiencies η<sub>t</sub> and η<sub>r</sub> account for illumination, spillover, surface accuracy, blockage, and other practical losses. Typical values range from 0.5 to 0.8.</li>
-        <li>System temperature T<sub>sys</sub> includes receiver noise, sky background, atmospheric emission, ground pickup, and spillover.</li>
-        <li>Detector bandwidth B is the noise-equivalent bandwidth of one energy-detector cell. A noncoherent range calculation requires both B and t<sub>int</sub>.</li>
-        <li>Integration time t<sub>int</sub> is the total noncoherent averaging time. The minimum detectable power decreases as t<sub>int</sub><sup>−1/2</sup>, so maximum range increases as t<sub>int</sub><sup>1/4</sup>.</li>
-        <li>Maximum range decreases as B<sup>−1/4</sup>. Narrower cells improve sensitivity but increase the required frequency resolution and may increase the number of search cells.</li>
-        <li>The acquisition threshold ρ<sub>acq</sub> is the required excess-power significance relative to the rms radiometric noise fluctuation. Values of about 5–7 are typical for a blind search over approximately one million independent frequency cells under Gaussian-noise assumptions. Larger values may be required in the presence of interference, non-Gaussian noise, receiver instability, or additional search dimensions.</li>
         <li>The power-transfer factor L is assumed to be close to unity. Its influence is discussed separately in <em>Propagation Through a Dispersive and Scintillating Channel</em>.</li>
-        <li>The default frequency is the neutral-hydrogen line at 1420.405751 MHz, corresponding to a wavelength of approximately 0.211061 m.</li>
+        <li>The acquisition threshold ρ<sub>acq</sub> is the required excess-power significance relative to the rms radiometric noise fluctuation. Values of about 5–7 are typical for a blind search over approximately one million independent frequency cells under Gaussian-noise assumptions. Larger values may be required in the presence of interference, non-Gaussian noise, receiver instability, or additional search dimensions.</li>
+        <li> k<sub>B</sub> is Boltzmann's constant.</li>
+        <li>System temperature T<sub>sys</sub> includes receiver noise, sky background, atmospheric emission, ground pickup, and spillover. Typical values are about 30 K for a space radio telescope and about 300 K for an uncooled terrestrial receiver.</li>
+        <li>Integration time t<sub>int</sub> is the total noncoherent averaging time. The minimum detectable power decreases as t<sub>int</sub><sup>−1/2</sup>, so maximum range increases as t<sub>int</sub><sup>1/4</sup>.</li>
+        <li>Detector bandwidth B is the noise-equivalent bandwidth of one energy-detector cell. A noncoherent range calculation requires both B and t<sub>int</sub>.</li>
         <li>The result is reported in parsecs and light-years and assumes free-space propagation, correct pointing, stationary Gaussian noise, and a signal remaining within one detector cell.</li>
       </ul>
     </section>
