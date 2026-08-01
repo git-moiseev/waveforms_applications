@@ -5,31 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Noncoherent Range Calculator</title>
   <link rel="stylesheet" href="calc/style.css">
+  <link rel="stylesheet" href="calc/display.css">
 </head>
 <body>
-  <!-- Decorative signal layer. It does not affect document layout. -->
+  <div class="background-grid" aria-hidden="true"></div>
+  <div class="background-stripes" aria-hidden="true"></div>
+  <div class="background-glow" aria-hidden="true"></div>
+  <div class="background-rings" aria-hidden="true"></div>
+
   <div id="signal-waves" aria-hidden="true"></div>
   <div id="signal-source" aria-hidden="true"></div>
 
   <main class="container">
-    <section class="panel">
-      <h2>Maximum Noncoherent Detection Range Calculator</h2>
-
-      <div class="formula">
-        <p>
-          R<sub>max</sub> =
-          π D<sub>t</sub> D<sub>r</sub> / (4 λ)
-          × √(P<sub>t</sub> η<sub>t</sub> η<sub>r</sub> L /
-          (ρ<sub>acq</sub> k<sub>B</sub> T<sub>sys</sub>))
-          × (t<sub>int</sub> / B)<sup>1/4</sup>
-        </p>
-      </div>
-
+    <section class="panel panel-title">
+      <span class="panel-kicker">INTERSTELLAR LINK ANALYSIS</span>
+      <div id="resultText" class="display-value"> Enter valid values </div>
     </section>
 
-    <section class="panel">
-      <h2>Parameters</h2>
-
+    <section class="panel panel-parameters">
+    
+  </br>
       <div class="grid">
         <label>
           <span class="nowrap">Transmitter diameter D<sub>t</sub>, m</span>
@@ -96,17 +91,30 @@
           <input id="rho" type="number" value="5" min="3" max="15" step="0.1">
           <input id="rho-range" type="range" value="5" min="3" max="15" step="0.1">
         </label>
-        <button id="resetButton" onclick="window.location.reload()">Reset Values</button>
+
+        <label>
+          <button id="resetButton" type="button" onclick="window.location.reload()">
+            <span class="button-icon" aria-hidden="true">↻</span>
+            Reset Values
+          </button>
+        </label>
       </div>
 
-      <div class="result" id="resultBox">
-        <strong>Result:</strong>
-        <p id="resultText">Enter valid values.</p>
-      </div>
+
     </section>
 
     <section class="panel notes">
+      <span class="panel-kicker">MODEL ASSUMPTIONS</span>
       <h2>Notes</h2>
+      <div class="formula">
+        <p>
+          R<sub>max</sub> =
+          π D<sub>t</sub> D<sub>r</sub> / (4 λ)
+          × √(P<sub>t</sub> η<sub>t</sub> η<sub>r</sub> L /
+          (ρ<sub>acq</sub> k<sub>B</sub> T<sub>sys</sub>))
+          × (t<sub>int</sub> / B)<sup>1/4</sup>
+        </p>
+      </div> 
       <ul>
         <li>All antenna diameters D<sub>t</sub> and D<sub>r</sub> are physical reflector diameters in meters.</li>
         <li>Transmitter power P<sub>t</sub> is the total RF power delivered to the transmitting antenna, expressed in kilowatts.</li>
@@ -115,7 +123,7 @@
         <li>Detector bandwidth B is the noise-equivalent bandwidth of one energy-detector cell. A noncoherent range calculation requires both B and t<sub>int</sub>.</li>
         <li>Integration time t<sub>int</sub> is the total noncoherent averaging time. The minimum detectable power decreases as t<sub>int</sub><sup>−1/2</sup>, so maximum range increases as t<sub>int</sub><sup>1/4</sup>.</li>
         <li>Maximum range decreases as B<sup>−1/4</sup>. Narrower cells improve sensitivity but increase the required frequency resolution and may increase the number of search cells.</li>
-        <li>The acquisition threshold ρ<sub>acq</sub> is the required excess-power significance relative to the rms radiometric noise fluctuation. Values of   about 5–7 are typical for a blind search over approximately one million independent frequency cells under Gaussian-noise assumptions. Larger values may be required in the presence of interference, non-Gaussian noise, receiver instability, or additional search dimensions. </li>
+        <li>The acquisition threshold ρ<sub>acq</sub> is the required excess-power significance relative to the rms radiometric noise fluctuation. Values of about 5–7 are typical for a blind search over approximately one million independent frequency cells under Gaussian-noise assumptions. Larger values may be required in the presence of interference, non-Gaussian noise, receiver instability, or additional search dimensions.</li>
         <li>The power-transfer factor L is assumed to be close to unity. Its influence is discussed separately in <em>Propagation Through a Dispersive and Scintillating Channel</em>.</li>
         <li>The default frequency is the neutral-hydrogen line at 1420.405751 MHz, corresponding to a wavelength of approximately 0.211061 m.</li>
         <li>The result is reported in parsecs and light-years and assumes free-space propagation, correct pointing, stationary Gaussian noise, and a signal remaining within one detector cell.</li>
