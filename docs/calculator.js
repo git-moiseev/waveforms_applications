@@ -2,21 +2,10 @@
 
 const kB = 1.380649e-23;
 const c = 299792458;
+const parsecInMeters = 3.0856775814913673e16;
 
 const minSeconds = 1;
 const maxSeconds = 365 * 24 * 60 * 60;
-
-const dtInput = document.getElementById('dt');
-const dtRange = document.getElementById('dt-range');
-
-const drInput = document.getElementById('dr');
-const drRange = document.getElementById('dr-range');
-
-const ptInput = document.getElementById('pt');
-const ptRange = document.getElementById('pt-range');
-
-const tintInput = document.getElementById('tint');
-const tintRange = document.getElementById('tint-range');
 
 const signalWaves = document.getElementById('signal-waves');
 const resultText = document.getElementById('resultText');
@@ -25,48 +14,86 @@ function clamp(value, minimum, maximum) {
   return Math.min(maximum, Math.max(minimum, value));
 }
 
-function connectNumberAndRange(numberInput, rangeInput, onUpdate) {
-  rangeInput.addEventListener('input', () => {
-    numberInput.value = rangeInput.value;
+function logSliderToValue(position, slider, minimum, maximum) {
+  const fraction =
+    (Number(position) - Number(slider.min)) /
+    (Number(slider.max) - Number(slider.min));
+
+  return minimum * Math.pow(maximum / minimum, fraction);
+}
+
+function valueToLogSlider(value, slider, minimum, maximum) {
+  const safeValue = clamp(Number(value), minimum, maximum);
+  const fraction =
+    Math.log(safeValue / minimum) /
+    Math.log(maximum / minimum);
+
+  return Number(slider.min) +
+    fraction * (Number(slider.max) - Number(slider.min));
+}
+
+function connectLinearPair(inputId, rangeId, onUpdate = calculateRmax) {
+  const input = document.getElementById(inputId);
+  const range = document.getElementById(rangeId);
+
+  range.addEventListener('input', () => {
+    input.value = range.value;
     onUpdate();
   });
 
-  numberInput.addEventListener('input', () => {
-    const value = Number(numberInput.value);
+  input.addEventListener('input', () => {
+    const value = Number(input.value);
 
     if (!Number.isFinite(value)) {
       return;
     }
 
-    rangeInput.value = clamp(
-      value,
-      Number(rangeInput.min),
-      Number(rangeInput.max)
-    );
-
+    range.value = clamp(value, Number(range.min), Number(range.max));
     onUpdate();
   });
 }
 
-function sliderToSeconds(position) {
-  const fraction =
-    (position - Number(tintRange.min)) /
-    (Number(tintRange.max) - Number(tintRange.min));
+function connectLogPair(
+  inputId,
+  rangeId,
+  minimum,
+  maximum,
+  decimals = 3,
+  onUpdate = calculateRmax
+) {
+  const input = document.getElementById(inputId);
+  const range = document.getElementById(rangeId);
 
+  const updateInputFromRange = () => {
+    const value = logSliderToValue(range.value, range, minimum, maximum);
+    input.value = Number(value.toPrecision(decimals));
+    onUpdate();
+  };
+
+  range.addEventListener('input', updateInputFromRange);
+
+  input.addEventListener('input', () => {
+    const value = Number(input.value);
+
+    if (!Number.isFinite(value) || value <= 0) {
+      return;
+    }
+
+    range.value = valueToLogSlider(value, range, minimum, maximum);
+    onUpdate();
+  });
+
+  range.value = valueToLogSlider(input.value, range, minimum, maximum);
+}
+
+function sliderToSeconds(position, slider) {
   return Math.round(
-    minSeconds * Math.pow(maxSeconds / minSeconds, fraction)
+    logSliderToValue(position, slider, minSeconds, maxSeconds)
   );
 }
 
-function secondsToSlider(seconds) {
-  const fraction =
-    Math.log(seconds / minSeconds) /
-    Math.log(maxSeconds / minSeconds);
-
-  return Math.round(
-    Number(tintRange.min) +
-    fraction * (Number(tintRange.max) - Number(tintRange.min))
-  );
+function secondsToSlider(seconds, slider) {
+  return valueToLogSlider(seconds, slider, minSeconds, maxSeconds);
 }
 
 function formatDuration(totalSeconds) {
@@ -132,35 +159,24 @@ function formatNumber(value, decimals = 3) {
 }
 
 function updatePowerEffect(value) {
-  const minPower = Number(ptRange.min);
-  const maxPower = Number(ptRange.max);
-
-  const power = clamp(
-    Number(value) || minPower,
-    minPower,
-    maxPower
-  );
+  const minimum = 1;
+  const maximum = 1000000;
+  const power = clamp(Number(value) || minimum, minimum, maximum);
 
   const level =
-    (Math.log10(power) - Math.log10(minPower)) /
-    (Math.log10(maxPower) - Math.log10(minPower));
+    (Math.log10(power) - Math.log10(minimum)) /
+    (Math.log10(maximum) - Math.log10(minimum));
 
-  /*
-   * Делает верхнюю часть диапазона визуально выразительнее.
-   * При 1000 kW visualLevel ≈ 0.49,
-   * при 10000 kW visualLevel = 1.
-   */
   const visualLevel = Math.pow(level, 2.5);
-
   const opacity = 0.01 + visualLevel * 0.55;
   const glowRadius = 1 + visualLevel * 12;
   const glowOpacity = 0.01 + visualLevel * 0.35;
 
   signalWaves.style.opacity = opacity.toFixed(4);
-
-  const dot = signalWaves;
-
-  dot.style.setProperty("--dot-scale", (0.8 + visualLevel * 0.6).toFixed(2));
+  signalWaves.style.setProperty(
+    '--dot-scale',
+    (0.8 + visualLevel * 0.6).toFixed(2)
+  );
 
   signalWaves.style.filter =
     `blur(0.3px) drop-shadow(` +
@@ -170,29 +186,20 @@ function updatePowerEffect(value) {
 }
 
 function calculateRmax() {
-  const Dt = Number(dtInput.value);
-  const Dr = Number(drInput.value);
-  const Pt = Number(ptInput.value) * 1000;
-
+  const Dt = Number(document.getElementById('dt').value);
+  const Dr = Number(document.getElementById('dr').value);
+  const Pt = Number(document.getElementById('pt').value) * 1000;
+  const tint = parseDuration(document.getElementById('tint').value);
+  const B = Number(document.getElementById('bandwidth').value);
+  const Tsys = Number(document.getElementById('Tsys').value);
   const freqMHz = Number(document.getElementById('freq').value);
   const etaT = Number(document.getElementById('etaT').value);
   const etaR = Number(document.getElementById('etaR').value);
   const L = Number(document.getElementById('L').value);
   const rho = Number(document.getElementById('rho').value);
-  const Tsys = Number(document.getElementById('Tsys').value);
-  const tint = parseDuration(tintInput.value);
 
   const values = [
-    Dt,
-    Dr,
-    Pt,
-    freqMHz,
-    etaT,
-    etaR,
-    L,
-    rho,
-    Tsys,
-    tint
+    Dt, Dr, Pt, tint, B, Tsys, freqMHz, etaT, etaR, L, rho
   ];
 
   if (values.some(value => !Number.isFinite(value) || value <= 0)) {
@@ -201,40 +208,63 @@ function calculateRmax() {
     return;
   }
 
-  const freqHz = freqMHz * 1e6;
-  const lambda = c / freqHz;
+  const lambda = c / (freqMHz * 1e6);
 
-  const numerator = Math.PI * Dt * Dr;
-  const insideSqrt =
-    Pt * etaT * etaR * L * tint /
-    (rho * kB * Tsys);
+  /*
+   * Noncoherent energy-detection range:
+   *
+   * Rmax = π Dt Dr / (4 λ)
+   *        × sqrt(Pt ηt ηr L / (ρacq kB Tsys))
+   *        × (tint / B)^(1/4)
+   */
+  const apertureFactor =
+    Math.PI * Dt * Dr / (4 * lambda);
+
+  const powerAndNoiseFactor = Math.sqrt(
+    Pt * etaT * etaR * L /
+    (rho * kB * Tsys)
+  );
+
+  const noncoherentIntegrationFactor =
+    Math.pow(tint / B, 0.25);
 
   const RmaxMeters =
-    (numerator / (4 * lambda)) *
-    Math.sqrt(insideSqrt);
+    apertureFactor *
+    powerAndNoiseFactor *
+    noncoherentIntegrationFactor;
 
-  const parsecInMeters = 3.0856775814913673e16;
   const RmaxParsec = RmaxMeters / parsecInMeters;
   const RmaxLy = RmaxParsec * 3.26156;
 
   resultText.innerHTML =
     `R<sub>max</sub> = <strong>${formatNumber(RmaxParsec, 3)}</strong> pc<br>` +
     `R<sub>max</sub> = <strong>${formatNumber(RmaxLy, 2)}</strong> light-years<br>` +
-    `t<sub>int</sub> = <strong>${formatNumber(tint, 0)}</strong> s`;
+    `t<sub>int</sub> = <strong>${formatNumber(tint, 0)}</strong> s<br>` +
+    `B = <strong>${formatNumber(B, B < 0.01 ? 6 : 3)}</strong> Hz`;
 }
 
 function updatePowerAndCalculation() {
-  updatePowerEffect(ptInput.value);
+  updatePowerEffect(document.getElementById('pt').value);
   calculateRmax();
 }
 
-connectNumberAndRange(dtInput, dtRange, calculateRmax);
-connectNumberAndRange(drInput, drRange, calculateRmax);
-connectNumberAndRange(ptInput, ptRange, updatePowerAndCalculation);
+connectLinearPair('dt', 'dt-range');
+connectLinearPair('dr', 'dr-range');
+connectLinearPair('etaT', 'etaT-range');
+connectLinearPair('etaR', 'etaR-range');
+connectLinearPair('L', 'L-range');
+
+connectLogPair('pt', 'pt-range', 1, 1000000, 6, updatePowerAndCalculation);
+connectLogPair('bandwidth', 'bandwidth-range', 0.000001, 1000000, 6);
+connectLogPair('Tsys', 'Tsys-range', 1, 10000, 6);
+connectLogPair('freq', 'freq-range', 10, 100000, 8);
+connectLogPair('rho', 'rho-range', 0.1, 1000, 6);
+
+const tintInput = document.getElementById('tint');
+const tintRange = document.getElementById('tint-range');
 
 tintRange.addEventListener('input', () => {
-  const seconds = sliderToSeconds(Number(tintRange.value));
-
+  const seconds = sliderToSeconds(tintRange.value, tintRange);
   tintInput.value = formatDuration(seconds);
   calculateRmax();
 });
@@ -247,20 +277,15 @@ tintInput.addEventListener('change', () => {
   }
 
   seconds = clamp(seconds, minSeconds, maxSeconds);
-
   tintInput.value = formatDuration(seconds);
-  tintRange.value = secondsToSlider(seconds);
-
+  tintRange.value = secondsToSlider(seconds, tintRange);
   calculateRmax();
 });
 
-document
-  .querySelectorAll('#Tsys, #freq, #etaT, #etaR, #L, #rho')
-  .forEach(input => {
-    input.addEventListener('input', calculateRmax);
-  });
+tintRange.value = secondsToSlider(
+  parseDuration(tintInput.value),
+  tintRange
+);
 
-tintRange.value = secondsToSlider(parseDuration(tintInput.value));
-
-updatePowerEffect(ptInput.value);
+updatePowerEffect(document.getElementById('pt').value);
 calculateRmax();
