@@ -24,6 +24,7 @@
           × (t<sub>int</sub> / B)<sup>1/4</sup>
         </p>
       </div>
+
     </section>
 
     <section class="panel">
@@ -45,7 +46,7 @@
         <label>
           <span class="nowrap">Transmit power P<sub>t</sub>, kW</span>
           <input id="pt" type="number" value="100" min="1" max="1000000" step="1">
-          <input id="pt-range" type="range" value="400" min="0" max="1000" step="1">
+          <input id="pt-range" type="range" value="100" min="1" max="1000000" step="1">
         </label>
 
         <label>
@@ -56,20 +57,20 @@
 
         <label>
           <span class="nowrap">Detector bandwidth B, Hz</span>
-          <input id="bandwidth" type="number" value="1" min="0.000001" max="1000000" step="0.001">
-          <input id="bandwidth-range" type="range" value="500" min="0" max="1000" step="1">
+          <input id="bandwidth" type="number" value="1" min="0.1" max="1000000" step="0.1">
+          <input id="bandwidth-range" type="range" value="1" min="0.1" max="1000000" step="0.1">
         </label>
 
         <label>
           <span class="nowrap">System temperature T<sub>sys</sub>, K</span>
-          <input id="Tsys" type="number" value="30" min="1" max="10000" step="0.1">
-          <input id="Tsys-range" type="range" value="369" min="0" max="1000" step="1">
+          <input id="Tsys" type="number" value="30" min="3" max="500" step="1">
+          <input id="Tsys-range" type="range" value="30" min="3" max="500" step="1">
         </label>
 
         <label>
           <span class="nowrap">Frequency f, MHz</span>
-          <input id="freq" type="number" value="1420.405751" min="10" max="100000" step="0.001">
-          <input id="freq-range" type="range" value="538" min="0" max="1000" step="1">
+          <input id="freq" type="number" value="1420.405751" min="10" max="100000" step="0.1">
+          <input id="freq-range" type="range" value="1420.405751" min="10" max="100000" step="0.1">
         </label>
 
         <label>
@@ -92,8 +93,8 @@
 
         <label>
           <span class="nowrap">Acquisition threshold ρ<sub>acq</sub></span>
-          <input id="rho" type="number" value="30" min="0.1" max="1000" step="0.1">
-          <input id="rho-range" type="range" value="619" min="0" max="1000" step="1">
+          <input id="rho" type="number" value="5" min="3" max="15" step="0.1">
+          <input id="rho-range" type="range" value="5" min="3" max="15" step="0.1">
         </label>
       </div>
 
@@ -113,7 +114,7 @@
         <li>Detector bandwidth B is the noise-equivalent bandwidth of one energy-detector cell. A noncoherent range calculation requires both B and t<sub>int</sub>.</li>
         <li>Integration time t<sub>int</sub> is the total noncoherent averaging time. The minimum detectable power decreases as t<sub>int</sub><sup>−1/2</sup>, so maximum range increases as t<sub>int</sub><sup>1/4</sup>.</li>
         <li>Maximum range decreases as B<sup>−1/4</sup>. Narrower cells improve sensitivity but increase the required frequency resolution and may increase the number of search cells.</li>
-        <li>The acquisition threshold ρ<sub>acq</sub> is the required excess-power significance relative to the rms radiometric fluctuation. It depends on the desired detection probability, false-alarm probability, and number of searched hypotheses.</li>
+        <li>The acquisition threshold ρ<sub>acq</sub> is the required excess-power significance relative to the rms radiometric noise fluctuation. Values of   about 5–7 are typical for a blind search over approximately one million independent frequency cells under Gaussian-noise assumptions. Larger values may be required in the presence of interference, non-Gaussian noise, receiver instability, or additional search dimensions. </li>
         <li>The power-transfer factor L is assumed to be close to unity. Its influence is discussed separately in <em>Propagation Through a Dispersive and Scintillating Channel</em>.</li>
         <li>The default frequency is the neutral-hydrogen line at 1420.405751 MHz, corresponding to a wavelength of approximately 0.211061 m.</li>
         <li>The result is reported in parsecs and light-years and assumes free-space propagation, correct pointing, stationary Gaussian noise, and a signal remaining within one detector cell.</li>
