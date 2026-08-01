@@ -59,6 +59,10 @@ body::after {
   pointer-events: none;
 }
 
+details p {
+  color: #e8f8ff;
+}
+
 .background-grid {
   opacity: 0.72;
   background-image:
